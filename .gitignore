@@ -1,0 +1,8 @@
+.vscode
+bin/
+include/
+lib/
+app.log
+deploy.prototxt
+parking.caffemodel
+pyvenv.cfg
