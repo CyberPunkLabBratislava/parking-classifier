@@ -2,7 +2,13 @@
 bin/
 include/
 lib/
+images/
+other/
+requirements.txt
 app.log
 deploy.prototxt
 parking.caffemodel
 pyvenv.cfg
+docker*
+parkingspots*
+model/

@@ -1,36 +1,97 @@
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model 
 import numpy as np
-import cv2
-import time
+import pandas as pd
+from PIL import Image
+# import cv2
+# import io as StringIO
+# import time
 import logging
 logger = logging.getLogger('root')
 
 class classifier:
-    def __init__(self):
-        pt = "/Users/jorgealmela/Documents/projects/personal/python/parking_classifier"
-        self.net = cv2.dnn.readNetFromCaffe(pt + "/deploy.prototxt", pt + "/parking.caffemodel")
+    def __init__(self, path):
+        self.path = path
+        # self.net = cv2.dnn.readNetFromCaffe(path + "/model/deploy.prototxt", path + "/model/parking.caffemodel")
+        self.classifier = load_model(self.path + '/model/cnnparking.h5')
         logger.info("Model loaded and classifier module ready")
 
-    def evaluate(self, path):
+    def evaluate(self, img):
         try:
-            # logger.info("Evaluating...")
-            image = cv2.imread(path)
-            blob = cv2.dnn.blobFromImage(image, 1, (224, 224), (104, 117, 123))
-            self.net.setInput(blob)
-            start = time.time()
-            preds = self.net.forward()
-            end = time.time()
-            logger.info("Classification took {:.5} seconds".format(end - start))
-            return(self.build_obj(preds))
+            size = 64, 64
+            test_image = img.resize(size) # Adapt to size of model
+            test_image = test_image.convert('RGB') # Ensure image is RGB, RGBA does not work well
+            # test_image.save(self.path + '/' + str(n) + '.jpg')
+            test_image = image.img_to_array(test_image)
+            test_image = np.expand_dims(test_image, axis=0)
+            result = self.classifier.predict(test_image)
+            if result[0][0] == 1:
+                prediction = 'free'
+            else:
+                prediction = 'busy'
+            # print(prediction)
+            return(prediction)
+
+            # Old CAFFE model classifier
+            # img = cv2.resize(img, (224, 224))
+            # # blob = cv2.dnn.blobFromImage(img, 1, (224, 224), (104, 117, 123))
+            # blob = cv2.dnn.blobFromImage(img, 1, (224, 224), (104, 117, 123))
+            # self.net.setInput(blob)
+            # start = time.time()
+            # preds.append(self.net.forward())
+            # end = time.time()
+            # logger.info("Classification took {:.5} seconds".format(end - start))
+            # # return(self.build_obj(preds))
+
         except Exception as err:
-            logger.error('Evaluation error')
+            logger.exception(err)
             return('Evaluation error')
+    
+    def crop_image(self, img):
+      
+        data = pd.read_csv(self.path + '/parkingspots.csv',index_col=0)
+        df = pd.DataFrame(data)
+        listx1 = tuple(df['x1'])
+        listy1 = tuple(df['y1'])
+        listx2 = tuple(df['x2'])
+        listy2 = tuple(df['y2'])
+
+        npimg=np.array(img)
+        parsed_image=npimg.copy()
+
+        images = []
+        for i in range(0,len(df)):
+            start_point = int(listx1[i]), int(listy1[i])
+            end_point = int(listx2[i]), int(listy2[i])
+            cropped_area = parsed_image[start_point[1]:end_point[1], start_point[0]:end_point[0]]
+            images.append(Image.fromarray(cropped_area))
+        
+        try:
+            results = []
+            n = 0
+            for i in images:
+                n += 1
+                results.append({ "id": n, "value": self.evaluate(i)})
+
+            logger.info(results)
+            # self.print_rectangles(img, results)
+            return("DONE")
+            
+        except Exception as err:
+            logger.exception(err)
+            return('Cropping error')
+
 
     def build_obj(self, x):
+        results = []
         try:
-            aux = x.tolist()
-            return({'result': aux[0]})
+            for item in x:
+                aux = item.tolist()
+                results.append(aux[0])
+                print(aux[0])
+            return({'results': results})
         except Exception as err:
-            logger.error('Error parsing predictions')
+            logger.exception(err)
             return('Error parsing predictions')
 
             

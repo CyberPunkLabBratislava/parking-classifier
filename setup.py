@@ -8,11 +8,14 @@ setup(name='parking_classifier',
         "itsdangerous==1.1.0",
         "Jinja2==2.10.3",
         "MarkupSafe==1.1.1",
-        "numpy==1.18.1",
         "opencv-python==4.1.2.30",
-        "Werkzeug==0.16.0"
+        "numpy==1.18.1",
+        "pandas==0.25.3",
+        "Werkzeug==0.16.0",
+        "pillow==7.0.0",
+        "tensorflow==2.1.0"
       ],
-      packages=['src', 'src.classes', 'src.utils'],
+      packages=['src', 'src.classes', 'src.utils', 'src.api'],
       entry_points={
           'console_scripts': [
               'parking_classifier = src.__main__:app.run'
