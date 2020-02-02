@@ -28,7 +28,9 @@ class api_services:
             result = self.classifier.crop_image(Image.open(io.BytesIO(img))
 )
             logger.debug("Parking image classified")
-            return(result)
+            imgByteArr = io.BytesIO()
+            result.save(imgByteArr, format='PNG')
+            return(imgByteArr.getvalue())
         except Exception as err:
             logger.exception(err)
             return("Problem receiving image")

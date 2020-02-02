@@ -2,7 +2,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model 
 import numpy as np
 import pandas as pd
-from PIL import Image
+from PIL import Image, ImageDraw
 # import cv2
 # import io as StringIO
 # import time
@@ -74,25 +74,43 @@ class classifier:
                 results.append({ "id": n, "value": self.evaluate(i)})
 
             logger.info(results)
-            # self.print_rectangles(img, results)
-            return("DONE")
+            final_image = self.print_rectangles(img, results, listx1, listx2, listy1, listy2)
+            return(final_image)
             
         except Exception as err:
             logger.exception(err)
             return('Cropping error')
 
 
-    def build_obj(self, x):
-        results = []
+    def print_rectangles(self, img, results, x1, x2, y1, y2):
+        draw = ImageDraw.Draw(img)
         try:
-            for item in x:
-                aux = item.tolist()
-                results.append(aux[0])
-                print(aux[0])
-            return({'results': results})
+            n=0
+            for i in results:
+                if i["value"] == "free":
+                    color = 'green'
+                else:
+                    color = 'red'
+                draw.rectangle(((int(x1[n]), int(y1[n])), (int(x2[n]), int(y2[n]))), outline=color, width=2)
+                n+=1
+            draw.text((20, 20), "PARKING CLASSIFIER")
+            return img
         except Exception as err:
             logger.exception(err)
-            return('Error parsing predictions')
+            return('Painting rectangles error')
+
+
+    # def build_obj(self, x):
+    #     results = []
+    #     try:
+    #         for item in x:
+    #             aux = item.tolist()
+    #             results.append(aux[0])
+    #             print(aux[0])
+    #         return({'results': results})
+    #     except Exception as err:
+    #         logger.exception(err)
+    #         return('Error parsing predictions')
 
             
 

@@ -1,5 +1,5 @@
 # Importing 3rd party classes
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 # Importing custom functions
 import src.utils.log as log
 import src.utils.parser as parser
@@ -32,7 +32,13 @@ def fun_2():
 
 @app.route('/classify', methods=['POST'])
 def fun_3():
-    return api.crop_and_classify(request.files["image"].read())
+    try:
+        result = api.crop_and_classify(request.files["image"].read())
+        return Response(response=result, status=200, mimetype="image/jpeg")
+    except Exception as err:
+        logger.exception(err)
+        return("Problem returning image")
+    
 
 @app.route('/detect', methods=['POST'])
 def fun_4():
