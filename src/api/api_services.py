@@ -1,4 +1,5 @@
 from src.classes.classifier import classifier
+from src.classes.detector import detector
 from PIL import Image
 from io import BytesIO
 import io
@@ -9,6 +10,7 @@ class api_services:
     def __init__(self, config):
         # Initialize classifier
         self.classifier = classifier(config["path"])
+        self.detector = detector(config["path"])
 
     def welcome(self):
         return "Welcome to parking classifier!"    
@@ -36,8 +38,15 @@ class api_services:
             return("Problem receiving image")
 
     def detect(self, img):
-        logger.debug("Object detection with parking image")
-        return("Under construction")
+        try:
+            result = self.detector.get_predection(Image.open(io.BytesIO(img)))
+            logger.debug("Object detection with parking image")
+            imgByteArr = io.BytesIO()
+            result.save(imgByteArr, format='PNG')
+            return(imgByteArr.getvalue())
+        except Exception as err:
+            logger.exception(err)
+            return("Problem receiving image")
 
 
             
