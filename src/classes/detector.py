@@ -12,13 +12,13 @@ class detector:
         self.yolo_path = path + "/model"
         self.confthres = 0.5 # Default 0.3
         self.nmsthres = 0.5 # Default 0.1
-        self.labelsPath= "/coco.names"
-        self.configPath= "/yolov3.cfg"
-        self.weightsPath= "/yolov3.weights"
-        self.Labels= self.get_labels()
-        self.CFG= self.get_config()
-        self.Weights= self.get_weights()
-        self.net= self.load_model(self.CFG, self.Weights)
+        self.labelsPath = "/coco.names"
+        self.configPath = "/yolov3.cfg"
+        self.weightsPath = "/yolov3.weights"
+        self.Labels = self.get_labels()
+        self.config = os.path.sep.join([self.yolo_path, self.configPath])
+        self.Weights = os.path.sep.join([self.yolo_path, self.weightsPath])
+        self.net = self.load_model(self.config, self.Weights)
         self.Colors= self.get_colors(self.Labels)
         
     def get_labels(self):
@@ -33,15 +33,6 @@ class detector:
         np.random.seed(42)
         COLORS = np.random.randint(0, 255, size=(len(LABELS), 3),dtype="uint8")
         return COLORS
-
-    def get_weights(self):
-        # derive the paths to the YOLO weights and model configuration
-        weightsPath = os.path.sep.join([self.yolo_path, self.weightsPath])
-        return weightsPath
-
-    def get_config(self):
-        configPath = os.path.sep.join([self.yolo_path, self.configPath])
-        return configPath
 
     def load_model(self, configpath, weightsPath):
         # load our YOLO object detector trained on COCO dataset (80 classes)
@@ -130,6 +121,7 @@ class detector:
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.Labels[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,0.5, color, 2)
+
         logger.info(boxes)
         logger.info(confidences)
         logger.info(classIDs)

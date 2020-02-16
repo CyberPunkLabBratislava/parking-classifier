@@ -12,3 +12,6 @@ pyvenv.cfg
 docker*
 parkingspots*
 model/
+**/__pycache__
+**/DS_Store
+DS_Store

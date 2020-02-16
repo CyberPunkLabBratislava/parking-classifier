@@ -9,11 +9,12 @@ from src.api.api_services import api_services
 # Initialize logger
 logger = log.setup_custom_logger('root')
 
-# Parse arguments
-config = parser.arg_parser()
-
 # Welcome
 logger.debug('Welcome to the classifier app')
+
+# Parse arguments
+config = parser.arg_parser()
+# config = {"path": "."}
 
 # Initialize Flask server
 app = Flask(__name__)
@@ -32,8 +33,13 @@ def fun_2():
 
 @app.route('/classify', methods=['POST'])
 def fun_3():
-    result = api.crop_and_classify(request.files["image"].read())
-    return Response(response=result, status=200, mimetype="image/jpeg")
+    try:
+        logger.debug(request.files)
+        result = api.crop_and_classify(request.files["image"].read())
+        return Response(response=result, status=200, mimetype="image/jpeg")
+    except Exception as err:
+        logger.exception(err)
+        return('Evaluation error')
     
 @app.route('/detect', methods=['POST'])
 def fun_4():
@@ -43,5 +49,5 @@ def fun_4():
 # Entrypoint
 if __name__ == '__main__':
     # Start app
-    app.debug = True
-    app.run(port=5000)
+    # app.debug = True
+    app.run(port=config.port, host=config.host)

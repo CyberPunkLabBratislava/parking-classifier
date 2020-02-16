@@ -13,6 +13,7 @@ class api_services:
         self.detector = detector(config["path"])
 
     def welcome(self):
+        logger.debug("Welcome to cyberlab app")
         return "Welcome to parking classifier!"    
     
     def classify_one(self, img):
