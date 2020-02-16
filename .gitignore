@@ -9,7 +9,6 @@ app.log
 deploy.prototxt
 parking.caffemodel
 pyvenv.cfg
-docker*
 parkingspots*
 model/
 **/__pycache__
