@@ -47,7 +47,7 @@ class classifier:
             logger.exception(err)
             return('Evaluation error')
     
-    def crop_image(self, img):
+    def crop_image(self, img, output_type):
       
         data = pd.read_csv(self.path + '/parkingspots.csv',index_col=0)
         df = pd.DataFrame(data)
@@ -74,8 +74,11 @@ class classifier:
                 results.append({ "id": n, "value": self.evaluate(i)})
 
             logger.info(results)
-            final_image = self.print_rectangles(img, results, listx1, listx2, listy1, listy2)
-            return(final_image)
+            if output_type == 'image':
+                final_image = self.print_rectangles(img, results, listx1, listx2, listy1, listy2)
+                return(final_image)
+            else:
+                return(results)
             
         except Exception as err:
             logger.exception(err)

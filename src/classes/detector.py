@@ -40,7 +40,7 @@ class detector:
         net = cv2.dnn.readNetFromDarknet(configpath, weightsPath)
         return net
 
-    def get_predection(self, img):
+    def get_predection(self, img, output_type):
         npimg=np.array(img)
         image=npimg.copy()
         image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
@@ -125,6 +125,10 @@ class detector:
         logger.info(boxes)
         logger.info(confidences)
         logger.info(classIDs)
-        image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-        image=Image.fromarray(image)
-        return image
+        if output_type == 'image':
+            image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+            image=Image.fromarray(image)
+            return image
+        else:
+            result = {"count": len(classIDs)}
+            return(result)
