@@ -14,4 +14,4 @@ RUN /bin/bash -c "source bin/activate"
 # RUN pip install dist/*
 RUN pip install -r requirements.txt
 EXPOSE 5000
-CMD uwsgi --module src.__main__:app --http :5000
+CMD uwsgi --module src.__main__:app --http :5000 --buffer-size 32768 --post-buffering 1
