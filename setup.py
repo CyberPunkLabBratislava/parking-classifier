@@ -12,7 +12,7 @@ setup(name='parking_classifier',
         "numpy==1.18.1",
         "pandas==0.25.3",
         "Werkzeug==0.16.0",
-        "pillow==7.0.0",
+        "pillow==8.3.2",
         "tensorflow==2.1.0",
         "uWSGI==2.0.18"
       ],
