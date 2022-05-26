@@ -13,7 +13,7 @@ setup(name='parking_classifier',
         "pandas==0.25.3",
         "Werkzeug==0.16.0",
         "pillow==7.0.0",
-        "tensorflow==2.1.0",
+        "tensorflow==2.7.2",
         "uWSGI==2.0.18"
       ],
       packages=['src', 'src.classes', 'src.utils', 'src.api'],
